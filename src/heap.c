@@ -31,7 +31,7 @@ static void *defaultRealloc(void *data, void *ptr, size_t size)
 static void *defaultAlignedAlloc(void *data, size_t alignment, size_t size)
 {
     (void)data;
-#ifdef _WIN32
+#ifdef _MSC_VER
     return _aligned_malloc(alignment, size);
 #else
     return aligned_alloc(alignment, size);
@@ -41,7 +41,7 @@ static void *defaultAlignedAlloc(void *data, size_t alignment, size_t size)
 static void defaultAlignedFree(void *data, size_t alignment, void *ptr)
 {
     (void)alignment;
-#ifdef _WIN32
+#ifdef _MSC_VER
     _aligned_free(data, ptr);
 #else
     defaultFree(data, ptr);

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
+#ifndef _MSC_VER
 #include <sys/uio.h>
+#endif
 
 #include "array.h"
 #include "assert.h"

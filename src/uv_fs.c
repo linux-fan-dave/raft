@@ -2,8 +2,18 @@
 
 #include <stdlib.h>
 #include <string.h>
+#ifdef _MSC_VER
+#include <io.h>
+#include <sys/stat.h>
+#define S_IRUSR _S_IREAD
+#define S_IWUSR _S_IWRITE
+#define lseek  _lseek
+/* TODO: fix */
+#define O_DSYNC 0
+#else
 #include <sys/vfs.h>
 #include <unistd.h>
+#endif
 
 #include "assert.h"
 #include "err.h"
@@ -509,7 +519,9 @@ err:
 /* Check if direct I/O is possible on the given fd. */
 static int probeDirectIO(int fd, size_t *size, char *errmsg)
 {
+#ifndef _MSC_VER
     struct statfs fs_info; /* To check the file system type. */
+#endif
     void *buf;             /* Buffer to use for the probe write. */
     int rv;
 
@@ -520,6 +532,7 @@ static int probeDirectIO(int fd, size_t *size, char *errmsg)
             UvOsErrMsg(errmsg, "fnctl", rv);
             return RAFT_IOERR;
         }
+#ifndef _MSC_VER
         rv = fstatfs(fd, &fs_info);
         if (rv == -1) {
             /* UNTESTED: in practice ENOMEM should be the only failure mode */
@@ -543,6 +556,7 @@ static int probeDirectIO(int fd, size_t *size, char *errmsg)
 #endif
                 return RAFT_IOERR;
         }
+#endif
     }
 
     /* Try to perform direct I/O, using various buffer size. */

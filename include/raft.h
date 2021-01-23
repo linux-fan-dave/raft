@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #    ifdef RAST_STATIC
 #        define RAFT_API 
 #    else  /* RAST_STATIC */
@@ -17,9 +17,9 @@
 #            define RAFT_API __declspec(dllimport)
 #        endif /* RAST_SHARED_BUILD */
 #    endif  /* RAST_STATIC */
-#else    /* _WIN32 */
+#else    /* _MSC_VER */
 #    define RAFT_API __attribute__((visibility("default")))
-#endif /* _WIN32 */
+#endif /* _MSC_VER */
 
 /**
  * Error codes.

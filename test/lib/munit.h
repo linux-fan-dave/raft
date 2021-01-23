@@ -137,7 +137,7 @@ extern "C" {
 #  define MUNIT_ARRAY_PARAM(name)
 #endif
 
-#if !defined(_WIN32)
+#if !defined(_MSC_VER)
 #  define MUNIT_SIZE_MODIFIER "z"
 #  define MUNIT_CHAR_MODIFIER "hh"
 #  define MUNIT_SHORT_MODIFIER "h"

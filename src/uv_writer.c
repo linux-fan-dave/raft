@@ -1,7 +1,11 @@
 #include "uv_writer.h"
 
 #include <string.h>
+#ifdef _MSC_VER
+#define IOCB_CMD_PWRITEV 0
+#else
 #include <unistd.h>
+#endif
 
 #include "../include/raft.h"
 #include "assert.h"
@@ -39,7 +43,7 @@ static void uvWriterReqFinish(struct UvWriterReq *req)
 }
 
 /* Wrapper around the low-level OS syscall, providing a better error message. */
-static int uvWriterIoSetup(unsigned n, aio_context_t *ctx, char *errmsg)
+static int uvWriterIoSetup(unsigned n, uv_aio_ctx *ctx, char *errmsg)
 {
     int rv;
     rv = UvOsIoSetup(n, ctx);
@@ -66,9 +70,9 @@ static void uvWriterWorkCb(uv_work_t *work)
 {
     struct UvWriterReq *req; /* Writer request object */
     struct UvWriter *w;      /* Writer object */
-    aio_context_t ctx;       /* KAIO handle */
-    struct iocb *iocbs;      /* Pointer to KAIO request object */
-    struct io_event event;   /* KAIO response object */
+    uv_aio_ctx ctx;          /* KAIO handle */
+    uv_iocb *iocbs;          /* Pointer to KAIO request object */
+    uv_io_event event;       /* KAIO response object */
     int n_events;
     int rv;
 
@@ -171,7 +175,7 @@ static void uvWriterPollCb(uv_poll_t *poller, int status, int events)
     assert(n_events >= 1);
 
     for (i = 0; i < (unsigned)n_events; i++) {
-        struct io_event *event = &w->events[i];
+        uv_io_event *event = &w->events[i];
         struct UvWriterReq *req = *((void **)&event->data);
 
 #if defined(RWF_NOWAIT)

@@ -5,7 +5,9 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 
 #include "../include/raft.h"
 #include "assert.h"
