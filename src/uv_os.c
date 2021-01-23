@@ -151,7 +151,7 @@ void UvOsJoin(const char *dir, const char *filename, char *path)
     strcat(path, filename);
 }
 
-int UvOsIoSetup(unsigned nr, aio_context_t *ctxp)
+int UvOsIoSetup(unsigned nr, uv_aio_ctx *ctxp)
 {
     int rv;
     rv = io_setup(nr, ctxp);
@@ -161,7 +161,7 @@ int UvOsIoSetup(unsigned nr, aio_context_t *ctxp)
     return 0;
 }
 
-int UvOsIoDestroy(aio_context_t ctx)
+int UvOsIoDestroy(uv_aio_ctx ctx)
 {
     int rv;
     rv = io_destroy(ctx);
@@ -171,7 +171,7 @@ int UvOsIoDestroy(aio_context_t ctx)
     return 0;
 }
 
-int UvOsIoSubmit(aio_context_t ctx, long nr, struct iocb **iocbpp)
+int UvOsIoSubmit(uv_aio_ctx ctx, long nr, uv_iocb **iocbpp)
 {
     int rv;
     rv = io_submit(ctx, nr, iocbpp);
@@ -182,7 +182,7 @@ int UvOsIoSubmit(aio_context_t ctx, long nr, struct iocb **iocbpp)
     return 0;
 }
 
-int UvOsIoGetevents(aio_context_t ctx,
+int UvOsIoGetevents(uv_aio_ctx ctx,
                     long min_nr,
                     long max_nr,
                     struct io_event *events,

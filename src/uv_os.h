@@ -4,11 +4,16 @@
 #define UV_OS_H_
 
 #include <fcntl.h>
-#include <linux/aio_abi.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <uv.h>
-
+#ifdef _WIN32
+typedef void* uv_aio_ctx;
+#else
+#include <linux/aio_abi.h>
+typedef aio_context_t uv_aio_ctx;
+typedef struct iocb uv_iocb;
+#endif
 /* For backward compat with older libuv */
 #if !defined(UV_FS_O_RDONLY)
 #define UV_FS_O_RDONLY O_RDONLY
@@ -104,11 +109,10 @@ int UvOsRename(const char *path1, const char *path2);
 /* Join dir and filename into a full OS path. */
 void UvOsJoin(const char *dir, const char *filename, char *path);
 
-/* TODO: figure a portable abstraction. */
-int UvOsIoSetup(unsigned nr, aio_context_t *ctxp);
-int UvOsIoDestroy(aio_context_t ctx);
-int UvOsIoSubmit(aio_context_t ctx, long nr, struct iocb **iocbpp);
-int UvOsIoGetevents(aio_context_t ctx,
+int UvOsIoSetup(unsigned nr, uv_aio_ctx *ctxp);
+int UvOsIoDestroy(uv_aio_ctx ctx);
+int UvOsIoSubmit(uv_aio_ctx ctx, long nr, uv_iocb **iocbpp);
+int UvOsIoGetevents(uv_aio_ctx ctx,
                     long min_nr,
                     long max_nr,
                     struct io_event *events,
