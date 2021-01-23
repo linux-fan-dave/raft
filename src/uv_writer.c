@@ -301,7 +301,7 @@ int UvWriterInit(struct UvWriter *w,
 err_after_event_fd:
     UvOsClose(w->event_fd);
 err_after_events_alloc:
-    HeapFree(w->events);
+    MyHeapFree(w->events);
 err_after_io_setup:
     UvOsIoDestroy(w->ctx);
 err:
@@ -314,7 +314,7 @@ static void uvWriterCleanUpAndFireCloseCb(struct UvWriter *w)
     assert(w->closing);
 
     UvOsClose(w->fd);
-    HeapFree(w->events);
+    MyHeapFree(w->events);
     UvOsIoDestroy(w->ctx);
 
     if (w->close_cb != NULL) {

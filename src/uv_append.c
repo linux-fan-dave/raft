@@ -74,7 +74,7 @@ static void uvAliveSegmentWriterCloseCb(struct UvWriter *writer)
     struct uvAliveSegment *segment = writer->data;
     struct uv *uv = segment->uv;
     uvSegmentBufferClose(&segment->pending);
-    HeapFree(segment);
+    MyHeapFree(segment);
     uvMaybeFireCloseCb(uv);
 }
 
@@ -120,7 +120,7 @@ static void uvAppendFinishRequestsInQueue(struct uv *uv, queue *q, int status)
         append = QUEUE_DATA(head, struct uvAppend, queue);
         QUEUE_REMOVE(head);
         req = append->req;
-        HeapFree(append);
+        MyHeapFree(append);
         req->cb(req, status);
     }
 }
@@ -422,7 +422,7 @@ static void uvAliveSegmentPrepareCb(struct uvPrepare *req, int status)
         QUEUE_REMOVE(&segment->queue);
         assert(status == RAFT_CANCELED); /* UvPrepare cancels pending reqs */
         uvSegmentBufferClose(&segment->pending);
-        HeapFree(segment);
+        MyHeapFree(segment);
         return;
     }
 
@@ -452,7 +452,7 @@ static void uvAliveSegmentPrepareCb(struct uvPrepare *req, int status)
 
 err:
     QUEUE_REMOVE(&segment->queue);
-    HeapFree(segment);
+    MyHeapFree(segment);
     uv->errored = true;
     uvAppendFinishPendingRequests(uv, rv);
 }
@@ -516,7 +516,7 @@ err_after_prepare:
     UvFinalize(uv, counter, 0, 0, 0);
 err_after_alloc:
     QUEUE_REMOVE(&segment->queue);
-    HeapFree(segment);
+    MyHeapFree(segment);
 err:
     assert(rv != 0);
     return rv;
@@ -653,7 +653,7 @@ int UvAppend(struct raft_io *io,
     return 0;
 
 err_after_req_alloc:
-    HeapFree(append);
+    MyHeapFree(append);
 err:
     assert(rv != 0);
     return rv;

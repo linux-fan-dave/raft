@@ -409,7 +409,7 @@ int UvFsReadFile(const char *dir,
     return 0;
 
 err_after_buf_alloc:
-    HeapFree(buf->base);
+    MyHeapFree(buf->base);
 err_after_open:
     UvOsClose(fd);
 err:

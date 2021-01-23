@@ -69,10 +69,10 @@ static void uvTcpIncomingCloseCb(struct uv_handle_s *handle)
     struct UvTcp *t = incoming->t;
     QUEUE_REMOVE(&incoming->queue);
     if (incoming->handshake.address.base != NULL) {
-        HeapFree(incoming->handshake.address.base);
+        MyHeapFree(incoming->handshake.address.base);
     }
-    HeapFree(incoming->tcp);
-    HeapFree(incoming);
+    MyHeapFree(incoming->tcp);
+    MyHeapFree(incoming);
     UvTcpMaybeFireCloseCb(t);
 }
 
@@ -142,8 +142,8 @@ static void uvTcpIncomingReadCbAddress(uv_stream_t *stream,
     QUEUE_REMOVE(&incoming->queue);
     incoming->t->accept_cb(incoming->t->transport, id, address,
                            (struct uv_stream_s *)incoming->tcp);
-    HeapFree(incoming->handshake.address.base);
-    HeapFree(incoming);
+    MyHeapFree(incoming->handshake.address.base);
+    MyHeapFree(incoming);
 }
 
 /* Read the preamble of the handshake. */
@@ -234,7 +234,7 @@ static int uvTcpIncomingStart(struct uvTcpIncoming *incoming)
     return 0;
 
 err_after_tcp_init:
-    uv_close((uv_handle_t *)incoming->tcp, (uv_close_cb)HeapFree);
+    uv_close((uv_handle_t *)incoming->tcp, (uv_close_cb)MyHeapFree);
     return rv;
 }
 
@@ -270,7 +270,7 @@ static void uvTcpListenCb(struct uv_stream_s *stream, int status)
 
 err_after_accept_alloc:
     QUEUE_REMOVE(&incoming->queue);
-    HeapFree(incoming);
+    MyHeapFree(incoming);
 err:
     assert(rv != 0);
 }

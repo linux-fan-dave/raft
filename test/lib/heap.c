@@ -29,7 +29,7 @@ static void *heapMalloc(void *data, size_t size)
     return munit_malloc(size);
 }
 
-static void heapFree(void *data, void *ptr)
+static void MyHeapFree(void *data, void *ptr)
 {
     struct heap *h = data;
     h->n--;
@@ -94,7 +94,7 @@ static void heapAlignedFree(void *data, size_t alignment, void *ptr)
 {
     struct heap *h = data;
     munit_assert_int(alignment, ==, h->alignment);
-    heapFree(data, ptr);
+    MyHeapFree(data, ptr);
 }
 
 static int getIntParam(const MunitParameter params[], const char *name)
@@ -117,7 +117,7 @@ void HeapSetUp(const MunitParameter params[], struct raft_heap *h)
 
     h->data = heap;
     h->malloc = heapMalloc;
-    h->free = heapFree;
+    h->free = MyHeapFree;
     h->calloc = heapCalloc;
     h->realloc = heapRealloc;
     h->aligned_alloc = heapAlignedAlloc;

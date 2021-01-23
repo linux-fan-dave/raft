@@ -64,7 +64,7 @@ static void uvTcpConnectFinish(struct uvTcpConnect *connect)
     struct raft_uv_connect *req = connect->req;
     int status = connect->status;
     QUEUE_REMOVE(&connect->queue);
-    HeapFree(connect->handshake.base);
+    MyHeapFree(connect->handshake.base);
     raft_free(connect);
     req->cb(req, stream, status);
 }
@@ -77,7 +77,7 @@ static void uvTcpConnectUvCloseCb(struct uv_handle_s *handle)
     struct UvTcp *t = connect->t;
     assert(connect->status != 0);
     assert(handle == (struct uv_handle_s *)connect->tcp);
-    HeapFree(connect->tcp);
+    MyHeapFree(connect->tcp);
     connect->tcp = NULL;
     uvTcpConnectFinish(connect);
     UvTcpMaybeFireCloseCb(t);
@@ -191,9 +191,9 @@ static int uvTcpConnectStart(struct uvTcpConnect *r, const char *address)
     return 0;
 
 err_after_tcp_init:
-    uv_close((uv_handle_t *)r->tcp, (uv_close_cb)HeapFree);
+    uv_close((uv_handle_t *)r->tcp, (uv_close_cb)MyHeapFree);
 err_after_encode_handshake:
-    HeapFree(r->handshake.base);
+    MyHeapFree(r->handshake.base);
 err:
     return rv;
 }
@@ -238,7 +238,7 @@ int UvTcpConnect(struct raft_uv_transport *transport,
 
 err_after_alloc:
     QUEUE_REMOVE(&r->queue);
-    HeapFree(r);
+    MyHeapFree(r);
 err:
     return rv;
 }

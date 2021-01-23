@@ -93,10 +93,10 @@ static void uvServerDestroy(struct uvServer *s)
 
     if (s->header.base != NULL) {
         /* This means we were interrupted while reading the header. */
-        HeapFree(s->header.base);
+        MyHeapFree(s->header.base);
         switch (s->message.type) {
             case RAFT_IO_APPEND_ENTRIES:
-                HeapFree(s->message.append_entries.entries);
+                MyHeapFree(s->message.append_entries.entries);
                 break;
             case RAFT_IO_INSTALL_SNAPSHOT:
                 configurationClose(&s->message.install_snapshot.conf);
@@ -105,10 +105,10 @@ static void uvServerDestroy(struct uvServer *s)
     }
     if (s->payload.base != NULL) {
         /* This means we were interrupted while reading the payload. */
-        HeapFree(s->payload.base);
+        MyHeapFree(s->payload.base);
     }
-    HeapFree(s->address);
-    HeapFree(s->stream);
+    MyHeapFree(s->address);
+    MyHeapFree(s->stream);
 }
 
 /* Invoked to initialize the read buffer for the next asynchronous read on the
@@ -176,7 +176,7 @@ static void uvServerStreamCloseCb(uv_handle_t *handle)
     struct uvServer *s = handle->data;
     struct uv *uv = s->uv;
     uvServerDestroy(s);
-    HeapFree(s);
+    MyHeapFree(s);
     uvMaybeFireCloseCb(uv);
 }
 
@@ -383,7 +383,7 @@ static void uvRecvAcceptCb(struct raft_uv_transport *transport,
     rv = uvAddServer(uv, id, address, stream);
     if (rv != 0) {
         tracef("add server: %s", errCodeToString(rv));
-        uv_close((struct uv_handle_s *)stream, (uv_close_cb)HeapFree);
+        uv_close((struct uv_handle_s *)stream, (uv_close_cb)MyHeapFree);
     }
 }
 
