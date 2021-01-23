@@ -18,7 +18,7 @@
 static void recvSendAppendEntriesResultCb(struct raft_io_send *req, int status)
 {
     (void)status;
-    HeapFree(req);
+    MyHeapFree(req);
 }
 
 int recvAppendEntries(struct raft *r,

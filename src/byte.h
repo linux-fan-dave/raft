@@ -5,7 +5,9 @@
 
 #include <stdint.h>
 #include <string.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 
 #if defined(__cplusplus)
 #define BYTE__INLINE inline

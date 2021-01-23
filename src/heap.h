@@ -11,6 +11,6 @@ void *HeapCalloc(size_t nmemb, size_t size);
 
 void *HeapRealloc(void *ptr, size_t size);
 
-void HeapFree(void *ptr);
+void MyHeapFree(void *ptr);
 
 #endif /* HEAP_H_ */

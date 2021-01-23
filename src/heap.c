@@ -31,13 +31,21 @@ static void *defaultRealloc(void *data, void *ptr, size_t size)
 static void *defaultAlignedAlloc(void *data, size_t alignment, size_t size)
 {
     (void)data;
+#ifdef _WIN32
+    return _aligned_malloc(alignment, size);
+#else
     return aligned_alloc(alignment, size);
+#endif
 }
 
 static void defaultAlignedFree(void *data, size_t alignment, void *ptr)
 {
     (void)alignment;
+#ifdef _WIN32
+    _aligned_free(data, ptr);
+#else
     defaultFree(data, ptr);
+#endif
 }
 
 static struct raft_heap defaultHeap = {
@@ -57,7 +65,7 @@ void *HeapMalloc(size_t size)
     return currentHeap->malloc(currentHeap->data, size);
 }
 
-void HeapFree(void *ptr)
+void MyHeapFree(void *ptr)
 {
     if (ptr == NULL) {
         return;
@@ -82,7 +90,7 @@ void *raft_malloc(size_t size)
 
 void raft_free(void *ptr)
 {
-    HeapFree(ptr);
+    MyHeapFree(ptr);
 }
 
 void *raft_calloc(size_t nmemb, size_t size)

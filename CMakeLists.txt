@@ -139,6 +139,8 @@ if(raft_shared)
     add_library(${PROJECT_NAME} SHARED ${RAFT_SOURCES} ${RAFT_HEADERS})
     set_property(TARGET ${PROJECT_NAME} PROPERTY VERSION${VERSION})
     set_property(TARGET ${PROJECT_NAME} PROPERTY SOVERSION 0.7)
+    
+    target_compile_options(${PROJECT_NAME} PRIVATE RAST_SHARED_BUILD)
 
     if(TARGET libuv)
         target_link_libraries(${PROJECT_NAME} libuv)

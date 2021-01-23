@@ -73,7 +73,7 @@ int raft_init(struct raft *r,
     return 0;
 
 err_after_address_alloc:
-    HeapFree(r->address);
+    MyHeapFree(r->address);
 err:
     assert(rv != 0);
     return rv;

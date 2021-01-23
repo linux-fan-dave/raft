@@ -6,7 +6,20 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#define RAFT_API __attribute__((visibility("default")))
+
+#ifdef _WIN32
+#    ifdef RAST_STATIC
+#        define RAFT_API 
+#    else  /* RAST_STATIC */
+#        ifdef RAST_SHARED_BUILD
+#            define RAFT_API __declspec(dllexport)
+#        else  /* RAST_SHARED_BUILD */
+#            define RAFT_API __declspec(dllimport)
+#        endif /* RAST_SHARED_BUILD */
+#    endif  /* RAST_STATIC */
+#else    /* _WIN32 */
+#    define RAFT_API __attribute__((visibility("default")))
+#endif /* _WIN32 */
 
 /**
  * Error codes.
